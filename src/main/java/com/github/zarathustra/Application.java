@@ -1,9 +1,9 @@
 package com.github.zarathustra;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.temporal.ChronoUnit;
-
+import com.github.zarathustra.domain.Person;
+import com.github.zarathustra.mongo.MultiTenantMongoDbFactory;
+import com.github.zarathustra.service.PersonRepository;
+import com.mongodb.MongoClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -12,10 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import com.github.zarathustra.domain.Person;
-import com.github.zarathustra.mongo.MultiTenantMongoDbFactory;
-import com.github.zarathustra.service.PersonRepository;
-import com.mongodb.Mongo;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
 
 @Configuration
 @EnableAutoConfiguration
@@ -28,16 +27,21 @@ public class Application implements CommandLineRunner {
     PersonRepository personRepository;
 
     @Bean
-    public MongoTemplate mongoTemplate(final Mongo mongo) throws Exception {
-        return new MongoTemplate(mongoDbFactory(mongo));
+    public MongoClient mongoClient() {
+        return new MongoClient("localhost");
     }
 
     @Bean
-    public MultiTenantMongoDbFactory mongoDbFactory(final Mongo mongo) throws Exception {
-        return new MultiTenantMongoDbFactory(mongo, "test");
+    public MongoTemplate mongoTemplate(final MongoClient mongoClient) throws Exception {
+        return new MongoTemplate(mongoDbFactory(mongoClient));
     }
 
-//    just to make it as simple as possible.
+    @Bean
+    public MultiTenantMongoDbFactory mongoDbFactory(final MongoClient mongoClient) throws Exception {
+        return new MultiTenantMongoDbFactory(mongoClient, "test");
+    }
+
+    //    just to make it as simple as possible.
     private Person createPerson(final String name, final String surename, final long age) {
         Person p = new Person();
         p.setName(name);
