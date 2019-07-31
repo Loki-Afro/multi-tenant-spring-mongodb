@@ -31,9 +31,6 @@ Conclusion
 
 I don't think that this is the best approach to archive this functionality but it just works without reinventing spring-data-mongodb.
 
-With just a `ThreadLocal` it is not done, if you walso want to create Indexes. So I added a bit more sugar to it.
-
-
 Just take a [look into Application.java](src/main/java/com/github/zarathustra/Application.java)
 
 Happy Hacking!
